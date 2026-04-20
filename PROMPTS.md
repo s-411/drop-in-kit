@@ -749,12 +749,9 @@ If anything fails, fix and rebuild (back to Stage 12). No Claude prompt for this
 
 ## Stage 14 — Screenshots
 
-**Before pasting the prompt below**, you do two manual things in ~30 seconds:
+**Before pasting the prompt below**, grab 5–6 simulator screenshots: `npx expo start --ios`, navigate to key screens, `Cmd+S` on each. They land in `~/Desktop`.
 
-1. **Read the ASC record's slot dimensions.** Open App Store Connect → this app → App Store tab → current version → App Previews and Screenshots. Note the iPhone slot label AND the iPad slot label.
-2. **Grab 5–6 simulator screenshots.** `npx expo start --ios`, navigate to key screens, `Cmd+S` on each. They land in `~/Desktop`.
-
-Then paste the prompt below into Claude Code, with the two `<fill>` lines replaced. Do not remove or soften any of the `MANDATORY` blocks — they exist because agents skip them otherwise.
+Then paste the prompt below into Claude Code as-is. Dimensions are pre-filled with the standard ASC slots. Do not remove or soften any of the `MANDATORY` blocks — they exist because agents skip them otherwise.
 
 ```
 SKILLS: Use aso-appstore-screenshots skill. Use nanobanana MCP (Gemini) for
@@ -763,21 +760,14 @@ all outpainting. Use self-check when reviewing final output.
 Invoke the aso-appstore-screenshots skill for this app's Stage 14.
 
 ══════════════════════════════════════════════════════════════════
-TARGET DIMENSIONS — fill from the ASC record (do not guess, do not
-use the skill's defaults):
+TARGET DIMENSIONS (pre-filled — do not use the skill's defaults):
 
-  iPhone: <fill>×<fill>
-  iPad:   <fill>×<fill>
+  iPhone: 1242×2688  (6.5" Display, portrait)
+  iPad:   2048×2732  (12.9" Display, portrait)
 
-Reference (pick the row matching the ASC slot label you saw):
-  iPhone 6.9" Display  → 1320×2868
-  iPhone 6.7" Display  → 1290×2796
-  iPhone 6.5" Display  → 1242×2688  or  1284×2778  (grandfathered)
-  iPad   13"           → 2064×2752
-  iPad   12.9"         → 2048×2732
-
-Grandfathered 6.5" ASC records SILENTLY REJECT 1320×2868 uploads.
-If the user didn't fill the iPhone line above, STOP and ask them.
+These are the standard slots for this pipeline. Do not override with
+1320×2868 or any other size — the ASC records use grandfathered 6.5"
+iPhone and 12.9" iPad slots.
 ══════════════════════════════════════════════════════════════════
 
 MANDATORY — BOTH DEVICE SETS
@@ -913,15 +903,9 @@ SECTION 1 — iOS App > Distribution (the main version page)
 
   1.1  Screenshots — paths in repo
        - iPhone screenshots folder: screenshots/final/iphone/
-         Required ASC iPhone sizes (one set is enough — pick the device size
-         the user actually targeted at Stage 14):
-           6.7" Display:  1290 × 2796 (portrait) or 2796 × 1290 (landscape)
-           6.5" Display:  1242 × 2688 (portrait) or 2688 × 1242 (landscape)
-           6.5" alt:      1284 × 2778 (portrait) or 2778 × 1284 (landscape)
+         Expected size: 1242 × 2688 (portrait) — 6.5" Display slot
        - iPad screenshots folder: screenshots/final/ipad/
-         Required ASC iPad sizes:
-           13":           2064 × 2752 (portrait) or 2752 × 2064 (landscape)
-           12.9":         2048 × 2732 (portrait) or 2732 × 2048 (landscape)
+         Expected size: 2048 × 2732 (portrait) — 12.9" Display slot
        - Verify both folders exist and contain images at the right resolution.
          If either is missing or wrong size, STOP and tell me — I'll fix at
          Stage 14 before continuing.
