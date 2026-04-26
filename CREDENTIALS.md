@@ -91,15 +91,14 @@ open -e ~/Documents/GitHub/.env-apps
 # Expo CLI auth — run `eas` without browser login
 export EXPO_TOKEN="paste-your-EXPO_TOKEN-here"
 
-# Gemini API key — powers the nanobanana MCP for in-app imagery + App Store screenshots
-# Required by START_NEW.md step 3a on every new repo
-export GEMINI_API_KEY="AIzaSyBX5SLxGn8f4RZnfwJKMp8grWVx7Y0QcKA"
-
 # Sentry source map uploads (optional — leave commented if not using Sentry yet)
 # export SENTRY_AUTH_TOKEN="paste-your-SENTRY_AUTH_TOKEN-here"
 
 # Apple Team ID — your team in EAS (already correct)
 export EXPO_APPLE_TEAM_ID="FUHV534M4K"
+
+# NOTE: GEMINI_API_KEY is NOT stored here. It's baked into ~/.claude.json
+# inside the nanobanana MCP config. See CREDENTIALS.md "Nanobanana MCP" section.
 ```
 
 Save the file.
@@ -235,30 +234,37 @@ These go into `.env.local` inside each repo (NOT into `.env-apps`), and `.env.lo
 
 MCP servers give Claude Code direct access to a tool's API/dashboard. Install ONLY the ones for stacks you're using.
 
-### Nanobanana MCP — REQUIRED before Stage 7b (AI imagery)
+### Nanobanana MCP — Gemini image generation (MANDATORY)
 
-Powers Gemini / Nano Banana image generation for app icons and in-app imagery. Install once per repo (MCPs in Claude Code 2.1.84+ are project-scoped).
+Powers Gemini image generation for app icons, in-app imagery, and App Store screenshot outpainting. Used throughout the build, not just at Stage 7b.
+
+**Where the key lives:** `~/.claude.json` → `mcpServers.nanobanana.env.GEMINI_API_KEY`. The key is baked literally into this file at install time. Shell env vars (`$GEMINI_API_KEY`, `.env-apps`) are NOT read at runtime — they were only used during the original `claude mcp add` command and have no effect after that.
+
+**How it works:** nanobanana is registered at the system level in `~/.claude.json`. Once installed, it's available to EVERY project automatically. You do NOT need to install it per-repo — just verify it's connected.
+
+**First-time setup (one-time only):**
+
+1. Get a Gemini API key from https://aistudio.google.com/app/apikey
+2. Install:
+   ```bash
+   claude mcp add nanobanana uvx nanobanana-mcp-server@latest -e GEMINI_API_KEY=<your-actual-key>
+   ```
+3. Verify: `claude mcp list | grep nanobanana` → `✓ Connected`
+4. Restart Claude Code (MCP loads at session start)
+
+**After first-time setup:** nanobanana is always available. `START_NEW.md` step 3a checks for it and skips the install if it's already connected.
+
+**To rotate the key (e.g. if Google flags it):**
+1. Generate a new key in AI Studio
+2. Edit `~/.claude.json` → find `mcpServers.nanobanana.env.GEMINI_API_KEY` → replace the value
+3. Cmd+Q VS Code, reopen
+4. Done — no shell files to update, no `.env-apps` to edit, no `launchctl` to mess with
 
 **Prereqs:**
-1. `uvx` installed on Mac: `curl -LsSf https://astral.sh/uv/install.sh | sh`
-2. `GEMINI_API_KEY` exported in your shell — already set in the `.env-apps` template above. Verify with `echo $GEMINI_API_KEY` (should print the key, not be empty). If empty, you skipped the Step 3/4 walkthrough above — go back and finish it.
-3. Billing activated on Google Cloud project the key is in (at https://console.cloud.google.com/billing) — image gen models now require billing even on free tier. Google gives $300 credit for new billing accounts (~7,500 images at Flash rates). If you already have a Google Cloud paid account from Maps/other services, you pay standard rates: ~$3 per app for 75-image passes.
+- `uvx` installed on Mac: `curl -LsSf https://astral.sh/uv/install.sh | sh`
+- Billing activated on Google Cloud project (https://console.cloud.google.com/billing) — image gen models require billing even on free tier. Google gives $300 credit for new billing accounts.
 
-**Install (run from inside each repo that needs it):**
-```bash
-claude mcp add nanobanana uvx nanobanana-mcp-server@latest -e GEMINI_API_KEY=$GEMINI_API_KEY
-```
-
-**Verify from inside the repo:**
-```bash
-claude mcp list
-# should show: nanobanana: uvx nanobanana-mcp-server@latest - ✓ Connected
-```
-
-**Set a budget alert so you don't get surprised:**
-- https://console.cloud.google.com/billing/budgets → Create Budget → $25/month → alerts at 50/90/100%
-
-**IMPORTANT:** MCPs only load at session start. If you add nanobanana while a Claude Code session is running, the running session won't see it — you need to close and reopen Claude Code.
+**Budget alert:** https://console.cloud.google.com/billing/budgets → Create Budget → $25/month → alerts at 50/90/100%
 
 ### Stripe MCP — when you start your first paid web (Next.js) app
 ```bash

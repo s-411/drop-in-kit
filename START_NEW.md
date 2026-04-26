@@ -65,13 +65,17 @@ fixes silently.
    This takes ~60 seconds. When done, confirm package.json, app.json, and
    App.tsx exist.
 
-3a. **Install the Nanobanana MCP for this repo (MANDATORY).** Claude Code 2.1.84+ scopes MCPs per-project, so this must be re-run on every new repo. Used throughout the build for in-app imagery AND for App Store screenshots — not just at Stage 7b.
-     claude mcp add nanobanana uvx nanobanana-mcp-server@latest -e GEMINI_API_KEY=$GEMINI_API_KEY
-   Verify:
+3a. **Verify Nanobanana MCP is available (MANDATORY).** Used throughout the build for in-app imagery AND App Store screenshots.
+   First check if it's already connected (it's often registered system-wide in `~/.claude.json`):
      claude mcp list | grep nanobanana
-   Expected: `nanobanana: uvx nanobanana-mcp-server@latest - ✓ Connected`
-   If $GEMINI_API_KEY is empty, STOP — `.env-apps` not sourced. See CREDENTIALS.md.
-   **The MCP loads at session start.** After installing, exit this Claude Code session and restart it before continuing — otherwise nanobanana tools won't be visible to the agent.
+   If output shows `✓ Connected` → **skip the install, move to step 4.** No restart needed.
+   If NOT connected → install it. The API key is baked into `~/.claude.json` from a prior install. Extract it:
+     grep -o '"GEMINI_API_KEY": *"[^"]*"' ~/.claude.json | head -1
+   Use that value to install:
+     claude mcp add nanobanana uvx nanobanana-mcp-server@latest -e GEMINI_API_KEY=<the-key-value>
+   Then verify: `claude mcp list | grep nanobanana` → `✓ Connected`
+   If the grep finds NO key in `~/.claude.json` at all, STOP and tell me — do not improvise.
+   **If you had to install (not just verify):** exit this Claude Code session and restart before continuing — the MCP only loads at session start.
 
 4. Pull the drop-in kit from GitHub into the repo root:
      npx degit s-411/drop-in-kit --force
