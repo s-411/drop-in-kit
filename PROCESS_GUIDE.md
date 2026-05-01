@@ -123,28 +123,36 @@ This is the stage where you turn competitor screenshots into 3–4 pixel-perfect
 
 ---
 
-# Stage 4 — Onboarding Flow Hardening (~30–45 min/app)
+# Stage 4 — Onboarding Flow Hardening (~60–90 min/app)
 
-**Skip if:** onboarding already covers the full flow (Quiz → Results → Custom Plan → Paywall) end to end.
+**Skip if:** onboarding already covers the full ~30-screen Mau-framework flow (Welcome → Problem/Solution → Quiz bank → Climax + Review Modal → Commitment → Social Proof → Paywall) end to end.
 
-Take the 3–4 screens from Stage 3 and extend them into the full conversion flow.
+Take the screens from Stage 3 and extend them into the full ~30-screen conversion flow per Mau Baron's framework.
 
-**Skill:** `building-native-ui` (Expo official) for building new screens, then `screen-wiring` (custom) to audit navigation between them.
+**Skills:**
+- `onboarding-planner` (planning, runs in your Claude.ai sub-chat for this app — installed at `~/.claude/skills/onboarding-planner/`)
+- `building-native-ui` + `screen-wiring` (build, runs in Claude Code in the repo via `PROMPTS.md` Stage 4)
 
 **Prompt:** `PROMPTS.md` Stage 4
 
-**Pre-work:** open `ONBOARDING_PATTERNS.md`. Pick 5–8 of the 12 patterns, ordered into an emotional arc for your specific app. Also pick the number of paywall variants (1/2/3). Fill these into the Stage 4 prompt's selection block before pasting.
+**Pre-work (CRITICAL — do BEFORE pasting the Stage 4 build prompt):**
 
-**Canonical arcs are listed in `ONBOARDING_PATTERNS.md`** — start from one of those if you're not sure.
+1. In your Claude.ai sub-chat for this app, invoke the `onboarding-planner` skill. It runs a 16-question interview about the app, target audience, psychology, and core problem.
+2. Skill outputs a downloadable `onboarding-plan.md`. Drop it at `app-references/onboarding-plan.md` in the repo.
+3. Verify the plan looks right — every screen has Goal, Copy, Visual, Pattern, and Mau parallel. If "Open questions" exist at the bottom of the plan, resolve them before triggering Stage 4 build.
+4. THEN paste the Stage 4 prompt into Claude Code in the repo. The agent reads the plan file and builds from it.
+
+The plan replaces the manual "pick patterns + fill selection block" step from earlier kit versions. The skill applies Mau Baron's $40k/month onboarding framework (~29 screens, 3 acts: Introduction → Climax → Conclusion) to your specific app's audience. `ONBOARDING_PATTERNS.md` is still the tactical menu — the skill references its 12 patterns by number per screen.
 
 **Critical settings:**
 - Paywall **visible but skippable** for now (skip link always works, RevenueCat hookup is in `LATER.md`)
-- Quiz answers persist and feed personalization on ALL downstream screens (Results, Summary, Custom Plan, etc.)
-- Top progress bar across the entire flow — remember to update `MAX_STEP` in OnboardingFlow to match new total screen count
+- Quiz answers persist and feed personalization on ALL downstream screens (Reflection, Summary, Faith Snapshot equivalents, etc.)
+- Review modal fires at the climax screen specified in the plan (typically screen 24, after the user completes their first feature use). NOT at the end. This is Mau's 1-in-8 review rate trick — emotional peak placement matters.
+- Top progress bar across the entire flow — remember to update `MAX_STEP` in OnboardingFlow to match new total screen count (~30)
 - All images local (`assets/onboarding/`), no remote URIs
 - Self-check after every phase
 
-**Out:** complete onboarding flow running on Expo Go, paywall skip works, MainAppShell stub reachable.
+**Out:** complete ~30-screen onboarding flow running on Expo Go, paywall skip works, review modal fires at climax, MainAppShell stub reachable.
 
 ---
 
