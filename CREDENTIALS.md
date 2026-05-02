@@ -4,31 +4,31 @@
 
 ---
 
-## What you already have (good news)
+## What EAS handles for you (no setup needed)
 
-Looking at your EAS dashboard, you already have these uploaded server-side:
+These credentials live on the EAS server and get reused across machines. You don't download them, you don't put them in your shell — `eas build` and `eas submit` pull them from EAS automatically.
 
-| Credential | Status | Where it lives |
-|------------|--------|----------------|
-| Apple Distribution Certificate | ✅ Valid (uploaded Jan 13, 2026) | EAS server |
-| Apple Push Key | ✅ Uploaded Jan 16, 2026 | EAS server |
-| App Store Connect API Key | ✅ Admin role (uploaded Jan 13, 2026) | EAS server |
-| Apple Team ID | ✅ `FUHV534M4K` (Leverage Ventures) | Visible in EAS dashboard |
+| Credential | Where it lives | What you do |
+|------------|----------------|-------------|
+| Apple Distribution Certificate | EAS server | Nothing — uploaded once, reused forever |
+| Apple Push Key | EAS server | Nothing — uploaded once, reused forever |
+| App Store Connect API Key (`.p8`) | EAS server | Nothing — uploaded once, reused forever |
 
-**EAS handles all four of these for you when you run `eas submit`.** You do not need to download the `.p8` file to your Mac. You do not need to set up `EXPO_ASC_*` env vars locally. The CLI calls the EAS server, the server has the credentials, done.
+If you switched developer teams or revoked something, you'd re-upload via the EAS dashboard. Otherwise, these are invisible infrastructure.
 
-This means CREDENTIALS.md is much simpler than originally written. You only need to set up 2 things locally.
+This means CREDENTIALS.md is much simpler than it might look. You only need to set up 2 things locally on each Mac, plus one ID:
 
 ---
 
-## What you need to set up (this walkthrough)
+## What you need to set up locally (this walkthrough)
 
-| Credential | Purpose | Time |
-|------------|---------|------|
+| Item | Purpose | Time |
+|------|---------|------|
 | `EXPO_TOKEN` | So `eas` commands run without browser login | 3 min |
+| `EXPO_APPLE_TEAM_ID` | Sets `FUHV534M4K` for the agent so it never has to ask | 30 sec |
 | `SENTRY_AUTH_TOKEN` | Source map uploads on EAS builds (skip if not using Sentry yet) | 3 min |
 
-Both go in the file you already created at `~/Documents/GitHub/.env-apps`.
+All three go in `~/Documents/GitHub/.env-apps`, loaded by `.zshrc` on every new terminal.
 
 ---
 
@@ -230,9 +230,16 @@ These go into `.env.local` inside each repo (NOT into `.env-apps`), and `.env.lo
 
 ---
 
-## Optional: MCP Servers (one-time setup, when relevant)
+## MCP Servers
 
-MCP servers give Claude Code direct access to a tool's API/dashboard. Install ONLY the ones for stacks you're using.
+MCP servers give Claude Code direct access to a tool's API/dashboard. Once installed at user scope (`--scope user`), they're available in every repo on this Mac without per-project config.
+
+**Verify what's currently connected:**
+```bash
+claude mcp list
+```
+
+**Mandatory:** nanobanana (below). Everything else in this section is conditional on the stack you're working in.
 
 ### Nanobanana MCP — Gemini image generation (MANDATORY)
 
@@ -247,7 +254,7 @@ Powers Gemini image generation for app icons, in-app imagery, and App Store scre
 1. Get a Gemini API key from https://aistudio.google.com/app/apikey
 2. Install:
    ```bash
-   claude mcp add nanobanana uvx nanobanana-mcp-server@latest -e GEMINI_API_KEY=<your-actual-key>
+   claude mcp add --scope user nanobanana uvx nanobanana-mcp-server@latest -e GEMINI_API_KEY=<your-actual-key>
    ```
 3. Verify: `claude mcp list | grep nanobanana` → `✓ Connected`
 4. Restart Claude Code (MCP loads at session start)
@@ -266,9 +273,42 @@ Powers Gemini image generation for app icons, in-app imagery, and App Store scre
 
 **Budget alert:** https://console.cloud.google.com/billing/budgets → Create Budget → $25/month → alerts at 50/90/100%
 
+### Convex MCP — when you start your first Convex-profile RN app
+
+```bash
+claude mcp add --scope user convex npx -y convex@latest mcp start
+```
+
+- Auth: none required at install — picks up the deployment from whichever repo cwd you're in (multi-project mode)
+- Capabilities: inspect schema, run queries, debug auth wiring, view logs
+
+### Clerk MCP (docs only) — when you start your first Next.js companion app
+
+```bash
+claude mcp add --transport http --scope user clerk https://mcp.clerk.com/mcp
+```
+
+- Auth: none required (this is Clerk's public docs/SDK-snippets MCP)
+- Capabilities: SDK snippet lookup, doc search
+- Note: RN apps in this kit do NOT use Clerk. This is for Next.js companion apps only.
+
+### Vercel plugin — when you start your first Next.js companion app
+
+Vercel's official Claude Code plugin (preferred over a manual MCP install):
+
+```bash
+/plugin install vercel@claude-plugins-official
+```
+
+(This is a Claude Code slash command, run from inside `claude`, not from your shell.)
+
+- Auth: OAuth flow on first use
+- Capabilities: `/deploy`, `/env`, `/status`, `/bootstrap` slash commands; auto-activates on Vercel/Next.js project detection
+- Includes 5 skills, 8 agents, 4 hooks, 1 MCP
+
 ### Stripe MCP — when you start your first paid web (Next.js) app
 ```bash
-claude mcp add --transport http stripe https://mcp.stripe.com/
+claude mcp add --transport http --scope user stripe https://mcp.stripe.com/
 ```
 - Auth: OAuth (browser-based, recommended) OR `STRIPE_SECRET_KEY` env var
 - Get keys: Stripe Dashboard → Developers → API keys
@@ -276,7 +316,7 @@ claude mcp add --transport http stripe https://mcp.stripe.com/
 
 ### Sentry MCP — when you wire Sentry on your first app
 ```bash
-claude mcp add --transport http sentry https://mcp.sentry.dev/mcp
+claude mcp add --transport http --scope user sentry https://mcp.sentry.dev/mcp
 ```
 - Auth: OAuth via browser (cloud) — no API key needed for cloud Sentry
 - For self-hosted: create access token with scopes `org:read`, `project:read`, `project:write`, `team:read`, `team:write`, `event:write`
@@ -284,7 +324,7 @@ claude mcp add --transport http sentry https://mcp.sentry.dev/mcp
 
 ### RevenueCat MCP — when you wire RevenueCat on your first paid app
 ```bash
-claude mcp add --transport http revenuecat https://mcp.revenuecat.ai/mcp \
+claude mcp add --transport http --scope user revenuecat https://mcp.revenuecat.ai/mcp \
   --header "Authorization: Bearer YOUR_API_V2_SECRET_KEY"
 ```
 - Auth: API v2 Secret Key required
@@ -295,7 +335,7 @@ claude mcp add --transport http revenuecat https://mcp.revenuecat.ai/mcp \
 ```bash
 claude mcp list
 ```
-Should show each server you've added with status `connected` or `ready`.
+Should show each server you've added with status `✓ Connected` or `✓ ready`.
 
 ### When NOT to install
-Don't install MCPs you won't use right now. They consume Claude Code's tool budget and add latency. The Stack Profiles map tells you which stacks each app uses — install accordingly.
+Don't install MCPs you won't use right now. They consume Claude Code's tool budget and add latency. The Stack Profiles map (`STACK_PROFILES.md`) tells you which stacks each app uses — install accordingly.

@@ -1,6 +1,6 @@
 # drop-in-kit
 
-**Version: v7**
+**Version: v8**
 
 Canonical source for the Expo / React Native app factory drop-in kit. Ships as plain files — drop them into any app repo to align it with the master pipeline.
 
@@ -41,6 +41,37 @@ Workflow:
 2. `git add -A`
 3. `git commit -m "<change summary>"`
 4. `git push`
+
+Or use the `kitpush` shell function (one-time install, see below):
+
+```bash
+kitpush "v8: tightened MCP install commands"
+```
+
+`kitpush` runs `add -A`, commits with the supplied message (or `"kit update"` if omitted), and pushes — from any cwd, without changing it.
+
+### One-time install of `kitpush` on a new Mac
+
+Append the function to `~/.zshrc`:
+
+```bash
+cat >> ~/.zshrc <<'EOF'
+
+# kitpush — commit and push any changes in the drop-in-kit repo from any cwd
+kitpush() {
+  (
+    cd "$HOME/Documents/GitHub/drop-in-kit" || return 1
+    git add -A
+    if git diff --cached --quiet; then
+      echo "kitpush: nothing to commit"
+      return 0
+    fi
+    git commit -m "${*:-kit update}" && git push
+  )
+}
+EOF
+source ~/.zshrc
+```
 
 Rules:
 
