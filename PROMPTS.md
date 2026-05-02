@@ -30,7 +30,7 @@ No Claude prompt — use `START_NEW.md` for NEW apps (paste-and-go), or manual u
 Paste this into Cursor:
 
 ```
-SKILLS: Use screen-cloner, building-native-ui, and design-consistency skills
+SKILLS: Use building-native-ui and design-consistency skills
 for this work.
 
 Read the HTML designs in app-references/html/ and the screenshot images in

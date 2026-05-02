@@ -1,6 +1,6 @@
 # drop-in-kit
 
-**Version: v8**
+**Version: v9**
 
 Canonical source for the Expo / React Native app factory drop-in kit. Ships as plain files — drop them into any app repo to align it with the master pipeline.
 

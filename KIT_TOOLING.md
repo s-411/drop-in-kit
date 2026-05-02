@@ -37,10 +37,20 @@ Google Drive, Notion, Gmail, Calendar are claude.ai consumer connectors. Ignore 
 
 Skills auto-load based on relevance. Knowing they exist lets you reach for them deliberately rather than improvising.
 
-### Custom
+### Expo (13)
 
-- **expo-skills** — Expo CLI patterns, EAS build/submit, common Expo errors. Reach for it on any Expo or EAS issue.
-- **screen-cloner** — direct image-to-RN generation with simulator-based verification. Stage 2 when porting screen designs from reference images.
+The Expo team's official skills, installed via `git clone https://github.com/expo/skills.git ~/.claude/skills/expo-skills` (it's a plugin-repo layout, not a single skill). Reach for these on any Expo CLI, EAS, native build, or platform-specific Expo issue.
+
+Highest-relevance for this kit's RN apps:
+
+- **building-native-ui** — RN UI patterns with Expo Router. Core reference for Stage 2 onboarding builds and Stage 6 main app builds.
+- **native-data-fetching** — network requests, API calls, data fetching in RN. Stage 6 when wiring Convex queries/mutations.
+- **expo-deployment** — App Store / Play Store / web hosting deploys. Stage 12-16.
+- **expo-cicd-workflows** — EAS workflow YAML.
+- **upgrading-expo** — SDK version upgrades.
+- **eas-update-insights** — OTA update health metrics post-launch.
+
+Other Expo skills available: `expo-api-routes`, `expo-dev-client`, `expo-module`, `expo-tailwind-setup`, `expo-ui-jetpack-compose`, `expo-ui-swift-ui`, `use-dom`.
 
 ### Convex (6)
 
