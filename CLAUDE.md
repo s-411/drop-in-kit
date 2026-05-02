@@ -19,12 +19,13 @@
 ## How to work in this repo
 
 1. **Run `BOOTSTRAP.md` first** if this is your first session in this repo, or if anything seems off (missing skills, build errors, missing files). It's a 5-minute verification that catches problems before they cascade.
-2. **Read `PROCESS_GUIDE.md`.** It defines all 16 stages with skip conditions.
-3. **Find the current stage above.** Do only that stage's work. Do not get ahead.
-4. **Use the prompt from `PROMPTS.md`** for the current stage.
-5. **Self-check after every phase.** Invoke `/skill self-check` before claiming any phase done.
-6. **Park scope creep in `LATER.md`.** Never expand scope inside the current stage.
-7. **Read context first. Plan mode before building.** No code without a plan I've approved.
+2. **Read `KIT_TOOLING.md`.** Inventory of skills and MCP servers available at user scope. Reach for these deliberately instead of improvising.
+3. **Read `PROCESS_GUIDE.md`.** It defines all 16 stages with skip conditions.
+4. **Find the current stage above.** Do only that stage's work. Do not get ahead.
+5. **Use the prompt from `PROMPTS.md`** for the current stage.
+6. **Self-check after every phase.** Invoke `/skill self-check` before claiming any phase done.
+7. **Park scope creep in `LATER.md`.** Never expand scope inside the current stage.
+8. **Read context first. Plan mode before building.** No code without a plan I've approved.
 
 ---
 
@@ -33,6 +34,7 @@
 | File | What it is |
 |------|-----------|
 | `BOOTSTRAP.md` | Per-repo setup verification — run first, every time. |
+| `KIT_TOOLING.md` | Inventory of skills + MCPs available at user scope. Read on session start. |
 | `PROCESS_GUIDE.md` | The 16-stage pipeline. Authoritative. |
 | `STACK_PROFILES.md` | Architecture decision (Local / Convex). Picked at Stage 0. |
 | `REF_DOCS_INDEX.md` | Map of stages → which file to read in the ref-docs library. |

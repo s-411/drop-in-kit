@@ -231,7 +231,7 @@ Your job: build the onboarding from the plan, exactly as specified.
 Rules (non-negotiable):
 - Every screen in the plan becomes ONE dedicated screen, in the order given.
 - Use src/theme/theme.ts exclusively. No inline hex, fonts, or spacing.
-- Reuse OnboardingShell + OnboardingHeader + GradientBorderButton from Stage 3.
+- Reuse OnboardingShell + OnboardingHeader + GradientBorderButton from Stage 2.
 - Top progress bar spans the entire flow (update MAX_STEP in OnboardingFlow
   to match new total screen count, ~30 — clamp goNext to prevent overflow).
 - All images local (download to assets/onboarding/ — NO remote URIs).
