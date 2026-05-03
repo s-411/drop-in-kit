@@ -20,10 +20,12 @@ report.
 
 ## Section A — Drop-in kit files present
 
-Every repo must contain these 15 docs at the root:
+Every repo must contain these 23 docs at the root:
 
 - [ ] `BOOTSTRAP.md` (this file)
 - [ ] `CLAUDE.md`
+- [ ] `KIT_TOOLING.md`
+- [ ] `KING_PROMPTS.md`
 - [ ] `PROCESS_GUIDE.md`
 - [ ] `PROMPTS.md`
 - [ ] `LATER.md`
@@ -32,19 +34,31 @@ Every repo must contain these 15 docs at the root:
 - [ ] `SCREENSHOT_WORKFLOW.md`
 - [ ] `TESTFLIGHT.md`
 - [ ] `START_NEW.md`
+- [ ] `TEMPLATE_FORK.md`
 - [ ] `CREDENTIALS.md`
 - [ ] `STACK_PROFILES.md`
 - [ ] `REF_DOCS_INDEX.md`
 - [ ] `ONBOARDING_PATTERNS.md`
+- [ ] `mau-onboarding-guide.md`
+- [ ] `SCREEN_PARKING_LOT.md`
 - [ ] `AI_IMAGERY.md`
+- [ ] `convex-auth-setup.md`
+- [ ] `convex-react-client.md`
+- [ ] `nextjs-bridge.md`
+
+Plus the legal templates:
+
+- [ ] `legal/privacy.template.md`
+- [ ] `legal/terms.template.md`
 
 **Verify command:**
 ```bash
-ls BOOTSTRAP.md CLAUDE.md PROCESS_GUIDE.md PROMPTS.md LATER.md \
-   EXPO_SKILLS.md APP_LANDING_PAGE.md SCREENSHOT_WORKFLOW.md \
-   TESTFLIGHT.md START_NEW.md CREDENTIALS.md STACK_PROFILES.md \
-   REF_DOCS_INDEX.md ONBOARDING_PATTERNS.md AI_IMAGERY.md \
-   convex-auth-setup.md convex-react-client.md nextjs-bridge.md
+ls BOOTSTRAP.md CLAUDE.md KIT_TOOLING.md KING_PROMPTS.md PROCESS_GUIDE.md \
+   PROMPTS.md LATER.md EXPO_SKILLS.md APP_LANDING_PAGE.md \
+   SCREENSHOT_WORKFLOW.md TESTFLIGHT.md START_NEW.md TEMPLATE_FORK.md \
+   CREDENTIALS.md STACK_PROFILES.md REF_DOCS_INDEX.md \
+   ONBOARDING_PATTERNS.md mau-onboarding-guide.md SCREEN_PARKING_LOT.md \
+   AI_IMAGERY.md convex-auth-setup.md convex-react-client.md nextjs-bridge.md
 ls legal/privacy.template.md legal/terms.template.md
 ```
 
@@ -54,24 +68,26 @@ If any are missing → refresh the kit from GitHub: `npx degit s-411/drop-in-kit
 
 ---
 
-## Section B — Custom skills present at the GLOBAL Mac location
+## Section B — Custom kit skills present (per-repo, shipped via degit)
 
-The 8 custom skills live at `~/.claude/skills/` (your Mac's home directory), NOT inside each repo. They're available to every Claude Code session on this Mac automatically.
+The 8 custom kit skills live INSIDE each repo at `.claude/skills/`. They ship with the kit via `npx degit s-411/drop-in-kit --force`, so every app gets the version that was current when degit last ran. Self-contained. Survives Mac transitions.
 
 Verify all 8 are present:
 
 ```bash
-ls ~/.claude/skills/{design-consistency,screen-wiring,app-backend-builder,self-check,app-store-approval,expo-publish,sentry-setup,analytics-posthog}/SKILL.md
+ls .claude/skills/{design-consistency,screen-wiring,app-backend-builder,self-check,app-store-approval,expo-publish,sentry-setup,analytics-posthog}/SKILL.md
 ```
 
 Should return 8 paths with no "No such file" errors.
 
 **Also check that `react-native-patterns` is NOT present** (deprecated — replaced by Expo's official `building-native-ui`):
 ```bash
-ls ~/.claude/skills/react-native-patterns 2>/dev/null && echo "DEPRECATED — DELETE THIS FOLDER" || echo "OK"
+ls .claude/skills/react-native-patterns 2>/dev/null && echo "DEPRECATED — DELETE THIS FOLDER" || echo "OK"
 ```
 
-If skills are missing → re-copy them from your master kit folder into `~/.claude/skills/`.
+If skills are missing → refresh the kit from GitHub: `npx degit s-411/drop-in-kit --force` (run from the repo root). This pulls the latest `.claude/skills/` along with all other kit docs.
+
+> Note: vendor skills (Convex, Clerk, Vercel, Next.js, Expo) and any other general-purpose skills live at `~/.claude/skills/` (user scope) and are documented in `KIT_TOOLING.md`. Only the 8 kit-coupled skills above ship per-repo.
 
 ---
 

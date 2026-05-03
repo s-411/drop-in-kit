@@ -116,8 +116,13 @@ fixes silently.
        }
      This bakes ITSAppUsesNonExemptEncryption: false into the Info.plist.
      Every EAS build will auto-pass export compliance with no manual step.
-   Add this comment at the top of the expo block:
-     "_naming_status": "Working name — finalize at Stage 11 before EAS build"
+   Add a naming-status marker inside expo.extra (NOT at the top of the
+   expo block — unknown top-level keys in expo are schema-invalid and
+   strict expo-doctor checks will reject them). If expo.extra does not
+   exist, create it:
+       "extra": {
+         "naming_status": "Working name — finalize at Stage 11 before EAS build"
+       }
 
 7. Set up eas.json with EAS-managed credentials:
    - Run: eas init
@@ -212,6 +217,6 @@ At Stage 11 (App Store Audit), you lock the final name. When you do, you need to
 3. **`CLAUDE.md`:** header lines
 4. **`BUNDLE_IDS.md`:** the row for this app
 5. **App Store Connect:** the bundle ID you reserve must match the new `expo.ios.bundleIdentifier`
-6. **Remove the `_naming_status` comment** from `app.json`
+6. **Remove the `naming_status` marker** from `app.json` (`expo.extra.naming_status`)
 
 The `app-store-approval` skill at Stage 11 will check all of these match.

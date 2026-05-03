@@ -1,41 +1,39 @@
 # KIT_TOOLING.md — System-Wide Skills & MCPs
 
-> **What this is:** the agent-facing inventory of skills and MCP servers installed at user scope on Steve's Mac. Every agent in every repo has access to everything listed here without per-project setup. Read this on session start so you know what's available before reaching for workarounds.
+> **What this is:** the agent-facing inventory of skills and MCP servers available in any repo running this kit. Read this on session start so you know what's available before reaching for workarounds.
+>
+> **Two skill locations to know about:**
+>
+> 1. **Per-repo kit skills** at `.claude/skills/` — 8 skills that ship with the kit via degit. Version-locked to whatever kit version this repo last pulled. Listed below.
+> 2. **User-scope vendor skills** at `~/.claude/skills/` — Convex, Clerk, Vercel, Next.js, Expo plugins. Installed once per Mac. Listed below.
 >
 > **Verify installation any time:**
 > ```bash
-> claude mcp list && echo "---" && ls -1 ~/.claude/skills/
+> claude mcp list && echo "---PER-REPO SKILLS---" && ls .claude/skills/ && echo "---USER-SCOPE SKILLS---" && ls ~/.claude/skills/
 > ```
 >
-> **If something listed here is missing or fails to invoke:** flag it and stop. Don't work around it — the user wants the kit fixed, not bypassed.
+> **If something listed here is missing or fails to invoke:** flag it and stop. Don't work around it — refresh the kit (`npx degit s-411/drop-in-kit --force`) for per-repo skills, or check `CREDENTIALS.md` for user-scope MCPs.
 
 ---
 
-## MCP servers
+## Per-repo kit skills (.claude/skills/)
 
-### Mandatory at Stage 1 of every repo
+These ship with the kit. Refresh via `npx degit s-411/drop-in-kit --force` in the repo root.
 
-- **nanobanana** — image generation via Gemini API. Used for app icons (Stage 7b), in-app illustrations (Stage 7b), and App Store screenshot outpainting (Stage 14). Install verification is step 3a of `START_NEW.md`. If `claude mcp list` doesn't show it as `✓ Connected`, stop and reinstall.
-
-### Used during RN app builds
-
-- **convex** — Convex DB introspection. Stage 5/6 — inspect schema, query state, debug auth wiring. Multi-project mode (auto-routes to whichever Convex project the current repo is linked to).
-- **revenuecat** — IAP introspection. Stage 12 — check entitlements, products, customer state. Skip for Local Stack Profile apps.
-
-### Used during Next.js companion app builds
-
-- **vercel** (plugin) — deploy + env management. Slash commands: `/deploy`, `/env`, `/status`, `/bootstrap`. Auto-activates on Vercel/Next.js project detection.
-- **clerk** — Clerk docs MCP for SDK snippet lookup. Note: RN apps in this kit do NOT use Clerk (Convex Auth only). This MCP is only relevant for Next.js bridge apps.
-
-### Not used by Claude Code in this kit
-
-Google Drive, Notion, Gmail, Calendar are claude.ai consumer connectors. Ignore them in build sessions.
+- **design-consistency** — Stage 7a (and any time UI is added/changed). Audits new screens against the existing design system to prevent visual drift.
+- **screen-wiring** — Pre-submission navigation audit. Confirms every screen is reachable, every button routes, no orphaned screens.
+- **app-backend-builder** — Stage 5/6. Reads an app with onboarding but no core loop, generates a phased PRD + build plan for the dashboard, settings, navigation, main features. Has reference resources at `references/app-patterns.md` and `references/build-plan-template.md`.
+- **self-check** — After any significant change. Claude reviews its own work before claiming a task done. Invoke as `/skill self-check`. Mandatory at Stage 10 gate.
+- **app-store-approval** — Stage 11. Full submission workflow: rejection-risk audit, ASC metadata, codebase review for App Store guidelines.
+- **expo-publish** — Stage 12+. EAS build, TestFlight, version bumps, eas.json config, build failure troubleshooting, OTA updates via Expo Updates.
+- **sentry-setup** — Stage 9a. Add Sentry crash reporting from scratch. Run after core app is built and EAS build is confirmed working, before App Store submission.
+- **analytics-posthog** — Stage 9b. Add PostHog product analytics from scratch. Same timing window as sentry-setup.
 
 ---
 
-## Skills (auto-loaded, ~/.claude/skills/)
+## User-scope vendor skills (~/.claude/skills/)
 
-Skills auto-load based on relevance. Knowing they exist lets you reach for them deliberately rather than improvising.
+Installed once per Mac via vendor marketplaces. Auto-load based on relevance. Knowing they exist lets you reach for them deliberately rather than improvising.
 
 ### Expo (13)
 
@@ -85,6 +83,33 @@ Highest-relevance for this kit's Next.js bridge: `clerk-setup`, `clerk-nextjs-pa
 
 ---
 
+---
+
+## MCP servers
+
+### Mandatory at Stage 1 of every repo
+
+- **nanobanana** — image generation via Gemini API. Used for app icons (Stage 7b), in-app illustrations (Stage 7b), and App Store screenshot outpainting (Stage 14). Install verification is step 3a of `START_NEW.md`. If `claude mcp list` doesn't show it as `✓ Connected`, stop and reinstall.
+
+### Used during RN app builds
+
+- **convex** — Convex DB introspection. Stage 5/6 — inspect schema, query state, debug auth wiring. Multi-project mode (auto-routes to whichever Convex project the current repo is linked to).
+- **revenuecat** — IAP introspection. Stage 12 — check entitlements, products, customer state. Skip for Local Stack Profile apps.
+
+### Used during Next.js companion app builds
+
+- **vercel** (plugin) — deploy + env management. Slash commands: `/deploy`, `/env`, `/status`, `/bootstrap`. Auto-activates on Vercel/Next.js project detection.
+- **clerk** — Clerk docs MCP for SDK snippet lookup. Note: RN apps in this kit do NOT use Clerk (Convex Auth only). This MCP is only relevant for Next.js bridge apps.
+
+### Not used by Claude Code in this kit
+
+Google Drive, Notion, Gmail, Calendar are claude.ai consumer connectors. Ignore them in build sessions.
+
+---
+
 ## Updating this inventory
 
-When a new skill or MCP is added to user scope, append it here and bump the kit version in the `README.md`. Agents trust this list — keep it accurate.
+- **Per-repo kit skills:** edit them in the kit repo at `.claude/skills/` and push. Each app picks them up on the next `npx degit s-411/drop-in-kit --force`.
+- **User-scope vendor skills or new MCPs:** append to the relevant section here, then bump the kit version in the `README.md`.
+
+Agents trust this list — keep it accurate.
